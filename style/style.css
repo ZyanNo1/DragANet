@@ -1,0 +1,320 @@
+/* 统一字符编码声明 */
+@charset "utf-8";
+
+/* 设置整个页面的基础样式 */
+body {
+    font-family: "Lato", sans-serif;
+    transition: background-color 0.5s;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* 侧边栏样式设置 */
+.left-column {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: width 0.5s;
+    padding-top: 60px;
+}
+
+/* 中间栏样式 */
+.middle-column {
+    flex: 3;
+    border-right: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    min-height: 100%;
+    position: relative;
+    margin-left: 0;
+    transition: margin-left 0.5s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 中间区域上方输入区域样式 */
+.input-area {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    transition: max-height 0.5s ease-in-out;
+    max-height: 100px;
+    overflow: hidden;
+}
+
+/* 选择框和按钮的容器 */
+.input-container {
+    display: flex;
+    align-items: center;
+    /* 垂直居中对齐 */
+    gap: 10px;
+    /* 设置选择框和按钮之间的间距 */
+}
+
+/* 中间区域下方可拖拽区域样式 */
+.drop-area {
+    flex: 1;
+    position: relative;
+    width: 80%;
+}
+
+/* 右侧栏样式 */
+.right-column {
+    flex: 1;
+    padding: 10px;
+    box-sizing: border-box;
+    min-height: 100%;
+    position: relative;
+}
+
+/* 侧边栏菜单项样式 */
+.dataset-item,
+.model-item {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #adadad;
+    display: block;
+    transition: color 0.3s;
+    min-width: 250px;
+    cursor: pointer;
+}
+
+/* 菜单项悬停和聚焦时的样式 */
+.dataset-item:hover,
+.model-item:hover {
+    color: #f1f1f1;
+}
+
+/* 子菜单项样式 */
+.sub-items {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #111;
+}
+
+/* 数据集子菜单项样式 */
+.dataset-sub-items .dataset-item {
+    font-size: 16px;
+    padding: 6px 8px 6px 32px;
+}
+
+/* 模型子菜单项样式 */
+.model-sub-items .model-item {
+    font-size: 16px;
+    padding: 6px 8px 6px 32px;
+}
+
+/* 打开侧边栏按钮样式 */
+.open-button {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 3;
+    color: #000;
+    transition: color 0.5s;
+}
+
+/* 关闭侧边栏按钮样式 */
+.left-column .closebtn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 25px;
+    margin-left: 50px;
+    color: #adadad;
+    transition: color 0.3s;
+    text-decoration: none;
+}
+
+/* 关闭按钮悬停样式 */
+.left-column .closebtn:hover {
+    color: #f1f1f1;
+}
+
+/* 当屏幕高度小于 450px 时的响应式样式 */
+@media screen and (max-height: 450px) {
+    .left-column {
+        padding-top: 15px;
+    }
+
+    .dataset-item,
+    .model-item {
+        font-size: 18px;
+    }
+}
+
+/* 拖拽到中间区域后的图片样式 */
+.dropped-image {
+    position: absolute;
+    z-index: 1;
+    width: 80px;
+    height: 80px;
+}
+
+/* 提示框样式 */
+.drag-hint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 5px;
+    z-index: 0;
+    font-size: 20px;
+}
+
+/* 删除提示样式 */
+.delete-hint {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 3px;
+    display: none;
+    z-index: 2;
+    cursor: pointer;
+}
+
+/* 参数输入区域样式 */
+.parameter-inputs {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 10px;
+}
+
+/* 标签样式 */
+.parameter-inputs label {
+    font-weight: bold;
+}
+
+/* 输入框样式 */
+.parameter-inputs input,
+.parameter-inputs select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.confirm-button {
+    padding: 5px 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    height: 26px;
+
+}
+
+.submit-button {
+    padding: 5px 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    height: 26px;
+    margin-top: 10px;
+    margin-left: 10px;
+
+}
+
+.confirm-button button:hover {
+    background-color: #0056b3;
+}
+
+/* 收起参数按钮样式 */
+.collapse-button {
+    padding: 5px 10px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.collapse-button:hover {
+    background-color: #5a6268;
+}
+
+/* 调整选择框的高度和对齐方式 */
+.input-area select {
+    height: 26px;
+    /* 降低选择框高度 */
+    padding: 4px;
+    /* 适当调整内边距 */
+    font-size: 14px;
+    vertical-align: middle;
+    /* 垂直居中对齐 */
+}
+
+/* 属性列表样式 */
+#attribute-list {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+#attribute-list p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+/* 确保箭头不会遮挡拖拽区域 */
+.arrow-svg {
+    pointer-events: none;
+}
+
+/* Monaco Editor 样式 */
+/* Monaco Editor 样式 */
+.monaco-editor {
+    width: 100%;
+    height: 600px;
+    /* 增加高度，例如从 400px 改为 600px */
+    margin-top: 20px;
+    /* 增加上边距，使输入框向下移动，单位可以根据需要调整 */
+}
+
+/* 关闭 Monaco Editor 的按钮样式 */
+.close-monaco-editor {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 1;
+    color: #aaa;
+    background-color: transparent;
+    border: none;
+}
+
+.close-monaco-editor:hover {
+    color: white;
+}
