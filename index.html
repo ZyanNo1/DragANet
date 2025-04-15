@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.40.0/min/vs/loader.js"></script>
+    <link rel="stylesheet" href="style/style.css">
+    <script src="script/script.js">   
+    </script>
+</head>
+
+<body>
+    <!-- 左侧侧边栏 -->
+    <div id="myLeft-column" class="left-column">
+        <!-- 关闭侧边栏按钮 -->
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <!-- 数据集菜单项 -->
+        <div class="dataset-item" onclick="toggleSubItems(this)">数据集</div>
+        <!-- 数据集子菜单项 -->
+        <div class="sub-items dataset-sub-items">
+            <div class="dataset-item">MNIST 数据集</div>
+            <div class="dataset-item">CIFAR-10 数据集</div>
+            <div class="dataset-item">+ 自定义数据集</div>
+        </div>
+        <!-- 模型菜单项 -->
+        <div class="model-item" onclick="toggleSubItems(this)">模型</div>
+        <!-- 模型子菜单项 -->
+        <div class="sub-items model-sub-items">
+            <div class="model-item">全连接层</div>
+            <div class="model-item">卷积层</div>
+            <div class="model-item">池化层</div>
+            <div class="model-item">归一化层</div>
+            <div class="model-item" onclick="createCodeInput()">dropout 层</div>
+            <!-- 自定义神经网络菜单项 -->
+            <div class="model-item" onclick="createCodeInput()">+ 自定义神经网络</div>
+        </div>
+    </div>
+    <!-- 中间区域 -->
+    <div class="middle-column">
+        <!-- 中间区域上方输入区域 -->
+        <!-- 中间区域上方输入区域 -->
+        <div class="input-area">
+            <div class="input-container">
+                <select id="layer-select">
+                    <option value="全连接层">全连接层</option>
+                    <option value="卷积层">卷积层</option>
+                    <option value="池化层">池化层</option>
+                    <option value="归一化层">归一化层</option>
+                    <option value="dropout 层">dropout 层</option>
+                </select>
+                <button class="confirm-button">确定</button>
+            </div>
+            <div id="parameter-inputs" class="parameter-inputs"></div>
+        </div>
+        <!-- 中间区域下方可拖拽区域 -->
+        <div class="drop-area">
+            <div class="drag-hint">拖拽到此处</div>
+        </div>
+    </div>
+    <!-- 右侧区域 -->
+    <div class="right-column">
+        <!-- 可在此添加右侧区域的内容 -->
+        <div class="right-column">
+            <h3>属性列表</h3>
+            <div id="attribute-list"></div> <!-- 用于显示属性列表 -->
+        </div>
+    </div>
+    <!-- 打开侧边栏按钮 -->
+    <span class="open-button" onclick="openNav()">&#9776; open</span>
+</body>
+
+</html>
