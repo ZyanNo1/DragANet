@@ -1,0 +1,62 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class GeneratedModel(nn.Module):
+    def __init__(self):
+        super(GeneratedModel, self).__init__()
+        {% for layer in layers %}
+        # {{ layer.type }} 层
+        {% if layer.type == 'Conv2d' %}
+        self.{{ layer.name }} = nn.Conv2d(
+            in_channels={{ layer.params.in_channels }},
+            out_channels={{ layer.params.out_channels }},
+            kernel_size={{ layer.params.kernel_size }},
+            stride={{ layer.params.stride }},
+            padding={{ layer.params.padding }}
+        )
+        {% elif layer.type == 'BatchNorm2d' %}
+        self.{{ layer.name }} = nn.BatchNorm2d(
+            num_features={{ layer.params.num_features }},
+            eps={{ layer.params.get('eps', 1e-05) }},
+            momentum={{ layer.params.get('momentum', 0.1) }}
+        )
+        {% elif layer.type == 'Dropout' %}
+        self.{{ layer.name }} = nn.Dropout(
+            p={{ layer.params.probability }}
+        )
+        {% elif layer.type == 'Transformer' %}
+        self.{{ layer.name }} = nn.Transformer(
+            d_model={{ layer.params.d_model }},
+            nhead={{ layer.params.nhead }},
+            num_encoder_layers={{ layer.params.encoder_layers }},
+            num_decoder_layers={{ layer.params.decoder_layers }}
+        )
+        {% elif layer.type == 'Linear' %}
+        self.{{ layer.name }} = nn.Linear(
+            in_features={{ layer.params.in_features }},
+            out_features={{ layer.params.out_features }}
+        )
+        {% elif layer.type == 'LSTM' %}
+        self.{{ layer.name }} = nn.LSTM(
+            input_size={{ layer.params.input_size }},
+            hidden_size={{ layer.params.hidden_size }},
+            num_layers={{ layer.params.num_layers }}
+        )
+        {% endif %}
+        {% endfor %}
+
+    def forward(self, x):
+        {% for layer in layers %}
+        {% if layer.type == 'Conv2d' %}
+        x = F.relu(self.{{ layer.name }}(x))
+        {% elif layer.type == 'MaxPool2d' %}
+        x = F.max_pool2d(x, kernel_size={{ layer.params.kernel_size }})
+        {% elif layer.type == 'Linear' %}
+        x = x.view(x.size(0), -1)  # Flatten
+        x = F.relu(self.{{ layer.name }}(x))
+        {% elif layer.type == 'LSTM' %}
+        x, _ = self.{{ layer.name }}(x)
+        {% endif %}
+        {% endfor %}
+        return x
