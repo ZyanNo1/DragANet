@@ -1,234 +1,56 @@
 <!DOCTYPE html>
+<!-- 设置语言为中文 -->
 <html lang="zh-CN">
 
 <head>
+    <!-- 设置字符集 -->
     <meta charset="UTF-8">
+    <!-- 设置控制视口的宽度和缩放比例 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI开发平台</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            /* 更美观的字体 */
-        }
-
-        body {
-            display: flex;
-            height: 100vh;
-            background-color: #f5f5f5;
-        }
-
-        .menu-btn {
-            position: fixed;
-            top: 10px;
-            left: 15px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 100;
-            color: #333;
-        }
-
-        .sidebar {
-            width: 250px;
-            height: 100%;
-            background-color: #f0f0f0;
-            /* 浅灰色背景 */
-            color: #333;
-            /* 黑色文字 */
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            position: fixed;
-            z-index: 99;
-            overflow-y: auto;
-        }
-
-        .sidebar.active {
-            transform: translateX(0);
-        }
-
-        .sidebar-header {
-            padding-left: 50px;
-            padding-top: 14px;
-            padding-bottom: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            border-bottom: 1px solid #ddd;
-            color: #333;
-            /* 黑色文字 */
-        }
-
-        .sidebar-item {
-            padding: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #ddd;
-            color: #333;
-            /* 黑色文字 */
-        }
-
-        .sidebar-item:hover {
-            background-color: #e5e5e5;
-        }
-
-        .sidebar-item i {
-            margin-left: 10px;
-            /* 图标在文字左侧 */
-            margin-right: 5px;
-            font-size: 16px;
-            color: #555;
-            /* 图标颜色 */
-        }
-
-        .toggle-btn {
-            margin-right: 0px;
-            font-size: 14px;
-            transition: transform 0.3s ease;
-            color: #555;
-            /* 箭头颜色 */
-            font-family: 'SimSun', system-ui, -apple-system, sans-serif;
-            /* 更美观的箭头字体 */
-        }
-
-        .sub-items {
-            display: none;
-            background-color: #f8f8f8;
-        }
-
-        .sub-item {
-            padding: 10px 20px 10px 40px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            color: #333;
-            /* 黑色文字 */
-        }
-
-        .sub-item:hover {
-            background-color: #e5e5e5;
-        }
-
-        .sub-item i {
-            margin-right: 10px;
-            font-size: 14px;
-            color: #555;
-            /* 图标颜色 */
-        }
-
-        /* 统一模型层的图标 */
-        .model-layer-icon {
-            color: #4a6baf;
-            /* 统一颜色 */
-        }
-
-        .add-dataset {
-            color: #2a7fde;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            margin-left: 5;
-            transition: margin-left 0.3s ease;
-        }
-
-        .main-content.active {
-            margin-left: 250px;
-        }
-    </style>
+    <!-- 设置标题 -->
+    <title>DragANet</title>
+    <!-- 设置样式表 -->
+    <link rel="stylesheet" href="style.css">
+    <!-- 引入图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
-    <button class="menu-btn" id="menuBtn">
-        <i class="fas fa-bars"></i> <!-- 常用侧边栏菜单图标 -->
-    </button>
-
+    <!-- 侧边栏按钮 -->
+    <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+    <!-- 侧边栏内容 -->
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            资源管理器
-        </div>
-
-        <!-- 数据集部分 -->
-        <div class="sidebar-item" id="datasetItem">
-            <div class="toggle-btn">></div> <!-- 使用更美观的箭头符号 -->
-            <i class="fas fa-folder"></i>
-            <span>数据集</span>
-        </div>
-        <div class="sub-items" id="datasetSubItems">
-            <div class="sub-item">
-                <i class="fas fa-database"></i>
-                <span>MNIST</span>
-            </div>
-            <div class="sub-item">
-                <i class="fas fa-database"></i>
-                <span>CIFAR-10</span>
-            </div>
-            <div class="sub-item add-dataset">
-                <i class="fas fa-plus-circle"></i>
-                <span>自定义数据集</span>
-            </div>
-        </div>
-
-        <!-- 模型部分 -->
+        <!-- 标题 -->
+        <div class="sidebar-header">资源管理器</div>
+        <!-- 模型文件夹 -->
         <div class="sidebar-item" id="modelItem">
-            <div class="toggle-btn">></div> <!-- 使用更美观的箭头符号 -->
+            <div class="toggle-btn">></div>
             <i class="fas fa-folder"></i>
             <span>模型</span>
         </div>
+        <!-- 模型文件夹子项 -->
         <div class="sub-items" id="modelSubItems">
-            <div class="sub-item">
-                <i class="fas fa-cube"></i>
+            <div class="sub-item"><i class="fas fa-cube"></i>
                 <span>全连接层</span>
             </div>
-            <div class="sub-item">
-                <i class="fas fa-cube"></i>
+            <div class="sub-item"><i class="fas fa-cube"></i>
                 <span>卷积层</span>
             </div>
-            <div class="sub-item">
-                <i class="fas fa-cube"></i>
+            <div class="sub-item"><i class="fas fa-cube"></i>
                 <span>池化层</span>
             </div>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const menuBtn = document.getElementById('menuBtn');
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
-
-            // 切换侧边栏
-            menuBtn.addEventListener('click', function () {
-                sidebar.classList.toggle('active');
-                mainContent.classList.toggle('active');
-            });
-
-            // 数据集折叠/展开
-            const datasetItem = document.getElementById('datasetItem');
-            const datasetSubItems = document.getElementById('datasetSubItems');
-            const datasetToggleBtn = document.getElementById('datasetToggleBtn');
-
-            datasetItem.addEventListener('click', function () {
-                datasetSubItems.style.display = datasetSubItems.style.display === 'block' ? 'none' : 'block';
-                datasetToggleBtn.classList.toggle('expanded');
-            });
-
-            // 模型折叠/展开
-            const modelItem = document.getElementById('modelItem');
-            const modelSubItems = document.getElementById('modelSubItems');
-            const modelToggleBtn = document.getElementById('modelToggleBtn');
-
-            modelItem.addEventListener('click', function () {
-                modelSubItems.style.display = modelSubItems.style.display === 'block' ? 'none' : 'block';
-                modelToggleBtn.classList.toggle('expanded');
-            });
-        });
-    </script>
+    <!-- 显示属性的按钮 -->
+    <button class="property-toggle" id="propertyToggle"><i class="fas fa-cog"></i></button>
+    <!-- 属性列表栏 -->
+    <div class="property-panel" id="propertyPanel">
+        <h3>属性列表</h3>
+        <!-- 这里可以添加更多属性内容 -->
+    </div>
+    <!-- 放置模型的区域 -->
+    <div id="dropzone" class="dropzone"></div>
+    <script src="script.js"></script>
 </body>
 
 </html>
