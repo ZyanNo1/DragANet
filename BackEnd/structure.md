@@ -18,4 +18,9 @@ deep-learning-builder/
 │   ├── response.py                        # format_response()：
 │   │                                          统一接口返回格式（success/data/error）
 │   └── error_handler.py                   # 自定义异常
-                                            （ValidationError DimensionMismatchError）
+│                                            （ValidationError DimensionMismatchError）
+├── static/                             # 前端页面
+│   ├── css/                               # 样式表
+│   │   └── style.css  
+│   └── js/                                # 前端交互逻辑
+│       └── script.js

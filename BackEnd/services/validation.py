@@ -3,7 +3,7 @@ from utils.error_handler import DimensionMismatchError, ValidationError
 LAYER_RULES = {
     'Conv2d': {
         'required': ['in_channels', 'out_channels', 'kernel_size'],
-        'optional': ['stride', 'padding']
+        'optional': ['stride', 'padding','activation']
     },
     'BatchNorm2d': {
         'required': ['num_features'],
@@ -23,7 +23,11 @@ LAYER_RULES = {
     },
     'Linear': {
         'required': ['in_features', 'out_features'],
-        'optional': ['bias']
+        'optional': ['bias', 'activation']
+    },
+    'Flatten': {  
+        'required': [],
+        'optional': []
     },
     'MaxPool2d': {
         'required': ['kernel_size'],
@@ -64,15 +68,38 @@ def validate_layers(layers):
                 raise ValueError(f"LSTM layer {idx}: dropout must be in [0, 1)")
 
 def validate_architecture(layers):
-    validate_layers(layers)  
+    validate_layers(layers)  # 参数检查
     
-    # 额外检查层顺序
-    has_flatten = False
+    has_flatten = False  # 标志是否已经遇到 Flatten 层
     for idx, layer in enumerate(layers):
-        if layer['type'] == 'Linear':
+        layer_type = layer['type']
+        
+        # 检查 Flatten 层的上下文
+        if layer_type == 'Flatten':
+            if has_flatten:
+                raise ValidationError(
+                    f"Layer {idx} ({layer_type}) 不允许多个 Flatten 层",
+                    layer_type=layer_type
+                )
+            if idx == 0 or layers[idx - 1]['type'] not in ['Conv2d', 'MaxPool2d']:
+                raise ValidationError(
+                    f"Layer {idx} ({layer_type}) 必须在 Conv2d 或 MaxPool2d 层之后",
+                    layer_type=layer_type
+                )
             has_flatten = True
-        elif has_flatten and layer['type'] not in ['Linear', 'Dropout']:
+        
+        # 检查 Linear 层的上下文
+        if layer_type == 'Linear':
+            if not has_flatten:
+                raise ValidationError(
+                    f"Layer {idx} ({layer_type}) 必须在 Flatten 层之后",
+                    layer_type=layer_type
+                )
+        
+        # 检查其他层是否出现在 Flatten 层之后
+        if has_flatten and layer_type not in ['Linear', 'Dropout','Flatten']:
             raise ValidationError(
-                f"Layer {idx} ({layer['type']}) 必须在Flatten层之后",
-                layer_type=layer['type']
+                f"Layer {idx} ({layer_type}) 必须在 Flatten 层之前",
+                layer_type=layer_type
             )
+    

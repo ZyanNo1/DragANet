@@ -1,10 +1,14 @@
+import os
 from jinja2 import Environment, FileSystemLoader
 from services.dimension_calculator import DimensionCalculator
 
 class CodeGenerator:
     def __init__(self):
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        # 拼接模板文件的路径
+        template_path = os.path.join(base_dir, '../templates')
         self.env = Environment(
-            loader=FileSystemLoader('app/templates'),
+            loader=FileSystemLoader(template_path),
             trim_blocks=True,
             lstrip_blocks=True
         )

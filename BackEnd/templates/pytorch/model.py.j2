@@ -43,20 +43,50 @@ class GeneratedModel(nn.Module):
             hidden_size={{ layer.params.hidden_size }},
             num_layers={{ layer.params.num_layers }}
         )
+        {% elif layer.type == 'MaxPool2d' %}
+        self.{{ layer.name }} = nn.MaxPool2d(
+            kernel_size={{ layer.params.kernel_size }},
+            stride={{ layer.params.stride }},
+            padding={{ layer.params.padding }}
+        )
+        {% elif layer.type == 'Flatten' %}
+        self.{{ layer.name }} = nn.Identity()
         {% endif %}
         {% endfor %}
 
     def forward(self, x):
         {% for layer in layers %}
         {% if layer.type == 'Conv2d' %}
-        x = F.relu(self.{{ layer.name }}(x))
+        x = self.{{ layer.name }}(x)
+        {% if layer.params.activation == 'ReLU' %}
+        x = F.relu(x)
+        {% elif layer.params.activation == 'Sigmoid' %}
+        x = F.sigmoid(x)
+        {% elif layer.params.activation == 'LeakyReLU' %}
+        x = F.leaky_relu(x)
+        {% endif %}
+        {% elif layer.type == 'BatchNorm2d' %}
+        x = self.{{ layer.name }}(x)
         {% elif layer.type == 'MaxPool2d' %}
-        x = F.max_pool2d(x, kernel_size={{ layer.params.kernel_size }})
+        x = self.{{ layer.name }}(x)
         {% elif layer.type == 'Linear' %}
-        x = x.view(x.size(0), -1)  # Flatten
-        x = F.relu(self.{{ layer.name }}(x))
+        {% if not loop.previtem or loop.previtem.type != 'Flatten' %}
+        x = x.view(x.size(0), -1)  # 展平操作，仅在前一层不是 Flatten 时添加
+        {% endif %}
+        x = self.{{ layer.name }}(x)
+        {% if layer.params.activation|default('ReLU') == 'ReLU' %}
+        x = F.relu(x)
+        {% elif layer.params.activation == 'Sigmoid' %}
+        x = F.sigmoid(x)
+        {% elif layer.params.activation == 'LeakyRELU' %}
+        x = F.leaky_relu(x)
+        {% endif %}
         {% elif layer.type == 'LSTM' %}
         x, _ = self.{{ layer.name }}(x)
+        {% elif layer.type == 'Flatten' %}
+        x = x.view(x.size(0), -1)  # 展平操作
+        {% elif layer.type == 'Dropout' %}
+        x = self.{{ layer.name }}(x)
         {% endif %}
         {% endfor %}
         return x

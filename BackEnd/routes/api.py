@@ -1,4 +1,5 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, render_template
+import traceback
 from services.code_generator import generate_dl_code
 from utils.response import format_response
 from services.validation import validate_architecture
@@ -10,10 +11,12 @@ api_bp = Blueprint('api', __name__)
 def generate_code_endpoint():
     try:
         data = request.get_json()
+        print("Received JSON data:", data)
         validate_architecture(data['layers'])
         
         # 添加维度兼容性检查
         code = generate_dl_code('pytorch', data['layers'], {})
+        print("Generated Code:", code)
         return format_response(data=code)
     
     except ValidationError as e:
@@ -28,7 +31,12 @@ def generate_code_endpoint():
             error=f"Dimension Error: {str(e)}"
         ), 422
     except Exception as e:
+        print("[Unhandled Exception]", traceback.format_exc())
         return format_response(
             success=False,
             error=f"Server Error: {str(e)}"
         ), 500
+    
+@api_bp.route('/demo')
+def demo_page():
+    return render_template('demo.html')

@@ -9,8 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 设置标题 -->
     <title>DragANet</title>
-    <!-- 设置样式表 -->
-    <link rel="stylesheet" href="style.css">
+    <!-- 设置样式表 --> <!--已经改为flask模板格式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <!-- 引入图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -19,7 +19,7 @@
     <!-- 侧边栏按钮 -->
     <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
     <!-- 侧边栏内容 -->
-    <div class="sidebar" id="sidebar">
+    <div class="sidebar active" id="sidebar">
         <!-- 标题 -->
         <div class="sidebar-header">资源管理器</div>
         <!-- 模型文件夹 -->
@@ -39,18 +39,24 @@
             <div class="sub-item"><i class="fas fa-cube"></i>
                 <span>池化层</span>
             </div>
+            <div class="sub-item"><i class="fas fa-cube"></i>
+                <span>展平层</span>
+            </div>
         </div>
     </div>
     <!-- 显示属性的按钮 -->
     <button class="property-toggle" id="propertyToggle"><i class="fas fa-cog"></i></button>
+    <!-- 添加“开始训练”按钮 -->
+    <button id="startTrainingBtn">开始训练</button>
     <!-- 属性列表栏 -->
-    <div class="property-panel" id="propertyPanel">
+    <div class="property-panel active" id="propertyPanel">
         <h3>属性列表</h3>
         <!-- 这里可以添加更多属性内容 -->
     </div>
     <!-- 放置模型的区域 -->
     <div id="dropzone" class="dropzone"></div>
-    <script src="script.js"></script>
+    <!--已经改为flask模板格式 -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 
 </html>

@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const modelSubItems = document.getElementById('modelSubItems');
     // 模型文件夹左侧的箭头
     const modelToggleBtn = document.querySelector('#modelItem .toggle-btn');
+    modelSubItems.style.display = 'block'; // 默认展开子项
+    modelToggleBtn.classList.add('expanded'); // 设置箭头为展开状态
     // 当模型文件夹被点击的时候，箭头变为向下，并展开内容
     modelItem.addEventListener('click', function () {
         modelSubItems.style.display = modelSubItems.style.display === 'block' ? 'none' : 'block'; // 展开子项
@@ -34,7 +36,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const draggableItems = document.querySelectorAll('.sub-item');
     // 模型拖拽放置的区域
     const dropzone = document.getElementById('dropzone');
-    // 拖拽开始事件
+    let draggedItem = null;
+
+    // 拖拽开始事件，设置模型文件夹子项可拖拽
     draggableItems.forEach(item => {
         item.draggable = true; // 设置模型可拖拽
         item.addEventListener('dragstart', function (e) {
@@ -47,9 +51,35 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
     // 拖拽进入放置区域事件
+    /*
     dropzone.addEventListener('dragover', function (e) {
         e.preventDefault(); // 允许放置
     });
+    */
+    //拖拽排序功能
+    dropzone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        const afterElement = getDragAfterElement(dropzone, e.clientY);
+        if (afterElement == null) {
+            dropzone.appendChild(draggedItem);
+        } else {
+            dropzone.insertBefore(draggedItem, afterElement);
+        }
+    });
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.draggable-item:not(.dragging)')];
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
     // 松开鼠标，完成一个对象的创建
     dropzone.addEventListener('drop', function (e) {
         e.preventDefault();
@@ -64,10 +94,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 params = { 输入维度: 320, 输出维度: 160, 激活函数: "ReLU" };
                 break;
             case "卷积层":
-                params = { 卷积核高度: 3, 卷积核宽度: 3, 步长: 2, 填充: 1 };
+                params = { 输入维度:3, 滤波器数量:16, 卷积核高度: 3, 卷积核宽度: 3, 步长: 2, 填充: 1, 激活函数: "ReLU" };
                 break;
             case "池化层":
-                params = { 池化方式: "最大池化", 块高度: 2, 块高度: 2 };
+                params = { 池化方式: "最大池化", 块高度: 2, 块宽度: 2 };
+                break;
+            case "展平层": // 展平层逻辑
+                params = {}; // 展平层不需要参数
+                break;
         }
         // Step 3：设置对象内容和数据属性
         draggableItem.innerHTML = `<div>${data}</div>`;
@@ -144,12 +178,18 @@ document.addEventListener('DOMContentLoaded', function () {
         // 解析并显示属性
         const params = JSON.parse(item.dataset.params);
         updatePropertyPanel(params);
+
+        // 自动展开右侧属性面板
+        const propertyPanel = document.getElementById('propertyPanel');
+        if (!propertyPanel.classList.contains('active')) {
+            propertyPanel.classList.add('active');
+        }
     }
 
     // 取消选择
     document.addEventListener('click', function (e) {
         if (!e.target.closest('.draggable-item') &&
-            !e.target.closest('#property-panel')) {
+            e.target.closest('.dropzone')) {
             document.querySelectorAll('.draggable-item').forEach(el => {
                 el.classList.remove('selected');
             });
@@ -170,6 +210,13 @@ document.addEventListener('DOMContentLoaded', function () {
             <button class="save-btn" id="saveBtn">保存</button>
             <button class="delete-btn">删除</button>
         `;
+        if (Object.keys(params).length === 0) {
+            const noParamsMessage = document.createElement('div');
+            noParamsMessage.textContent = "此层无需参数配置。";
+            noParamsMessage.style.color = "#888";
+            panel.appendChild(noParamsMessage);
+            return;
+        }
         // 动态生成属性列表
         for (const [key, value] of Object.entries(params)) {
             const row = document.createElement('div');
@@ -178,17 +225,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 row.innerHTML = `
                     <label>${key}:</label>
                     <select data-key="${key}">
-                        <option value="Sigmoid">Sigmoid</option>
-                        <option value="ReLU">ReLU</option>
-                        <option value="LeakyRELU">LeakyRELU</option>
+                        <option value="Sigmoid" ${value === "Sigmoid" ? "selected" : ""}>Sigmoid</option>
+                        <option value="ReLU" ${value === "ReLU" ? "selected" : ""}>ReLU</option>
+                        <option value="LeakyRELU" ${value === "LeakyRELU" ? "selected" : ""}>LeakyRELU</option>
                     </select>
                 `;
             else if (key == "池化方式")
                 row.innerHTML = `
                     <label>${key}:</label>
                     <select data-key="${key}">
-                        <option value="最大池化">最大池化</option>
-                        <option value="平均池化">平均池化</option>
+                        <option value="最大池化" ${value === "最大池化" ? "selected" : ""}>最大池化</option>
+                        <option value="平均池化" ${value === "平均池化" ? "selected" : ""}>平均池化</option>
                     </select>
                 `;
             else row.innerHTML = `
@@ -231,10 +278,191 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (selectedItem) {
                     selectedItem.remove();
                     alert('删除成功！');
+                    const panel = document.getElementById('propertyPanel');
+                    // 清空现有内容
+                    panel.innerHTML = `
+                <h3>属性列表</h3>
+            `;
                 } else {
                     console.warn('没有选中任何元素');
                 }
             }
         });
     }
+
+    // 获取“开始训练”按钮
+    const startTrainingBtn = document.getElementById('startTrainingBtn');
+    // 为“开始训练”按钮添加点击事件监听器
+    startTrainingBtn.addEventListener('click', () => {
+        const layers = [];
+        const draggableItems = Array.from(document.querySelectorAll('.draggable-item'));
+
+        draggableItems.sort((a, b) => {
+            const topA = parseInt(a.style.top || '0', 10); // 确保 topA 有默认值
+            const topB = parseInt(b.style.top || '0', 10); // 确保 topB 有默认值
+            return topA - topB; // 按 top 值升序排序
+        });
+
+
+        draggableItems.forEach(item => {
+            const type = item.dataset.type;
+            const params = JSON.parse(item.dataset.params);
+            let layer;
+            switch (type) {
+                case "全连接层":
+                    layer = {
+                        type: "Linear",
+                        name: `fc${layers.length + 1}`,
+                        params: {
+                            in_features: parseInt(params["输入维度"]),
+                            out_features: parseInt(params["输出维度"]),
+                            activation: params["激活函数"]
+                        }
+                    };
+                    break;
+                case "卷积层":
+                    layer = {
+                        type: "Conv2d",
+                        name: `conv${layers.length + 1}`,
+                        params: {
+                            in_channels:  parseInt(params["输入维度"]), 
+                            out_channels:  parseInt(params["滤波器数量"]), 
+                            kernel_size: parseInt(params["卷积核高度"]),
+                            stride: parseInt(params["步长"]),
+                            padding: parseInt(params["填充"]),
+                            activation: params["激活函数"]
+                        }
+                    };
+                    break;
+                case "池化层":
+                    layer = {
+                        type: "MaxPool2d",
+                        name: `pool${layers.length + 1}`,
+                        params: {
+                            kernel_size: parseInt(params["块高度"]),
+                            stride: parseInt(params["块宽度"]),
+                            padding: 0
+                        }
+                    };
+                    break;
+                case "展平层":
+                    layer = {
+                        type: "Flatten",
+                        name: `flatten${layers.length + 1}`,
+                        params: {} // 展平层不需要参数
+                    };
+                    break;   
+            }
+            layers.push(layer);
+        });
+
+        const data = {
+            layers: layers
+        };
+
+        // 使用 fetch 发送数据到后端，假设后端地址为 'http://your-backend-url'
+        fetch('http://localhost:5000/generate', { // 假设后端运行在本地 5000 端口，根据实际情况修改
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+       .then(async response => {
+        const result = await response.json();
+        console.log('后端响应:', result);
+    
+        if (response.ok && result.success) {
+            alert(' 模型代码生成成功！');
+            showCodePopup(result.data);
+        } else {
+            alert(`生成失败：${result.error.message || '未知错误'}`);
+        }
+        })
+       .catch(error => {
+            console.error('发送数据时出错:', error);
+            alert('发送数据失败，请检查网络连接！');
+        });
+    });
 });
+
+function showCodePopup(code) {
+    // 创建遮罩层
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = 0;
+    overlay.style.left = 0;
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    overlay.style.zIndex = 1000;
+
+    // 创建弹出框
+    const popup = document.createElement('div');
+    popup.style.position = 'fixed';
+    popup.style.top = '50%';
+    popup.style.left = '50%';
+    popup.style.transform = 'translate(-50%, -50%)';
+    popup.style.width = '80%';
+    popup.style.maxWidth = '600px';
+    popup.style.backgroundColor = '#fff';
+    popup.style.maxHeight = '90%';
+    popup.style.borderRadius = '8px';
+    popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+    popup.style.padding = '20px';
+    popup.style.zIndex = 1001;
+    popup.style.overflowY = 'auto';
+
+    // 添加标题
+    const title = document.createElement('h3');
+    title.textContent = '生成的代码';
+    title.style.marginBottom = '10px';
+    popup.appendChild(title);
+
+    // 添加代码显示区域
+    const codeArea = document.createElement('pre');
+    codeArea.textContent = code;
+    codeArea.style.backgroundColor = '#f4f4f4';
+    codeArea.style.padding = '10px';
+    codeArea.style.border = '1px solid #ddd';
+    codeArea.style.borderRadius = '4px';
+    codeArea.style.overflowX = 'auto';
+    popup.appendChild(codeArea);
+
+    // 添加复制按钮
+    const copyButton = document.createElement('button');
+    copyButton.textContent = '复制代码';
+    copyButton.style.marginTop = '10px';
+    copyButton.style.padding = '8px 16px';
+    copyButton.style.backgroundColor = '#1890ff';
+    copyButton.style.color = '#fff';
+    copyButton.style.border = 'none';
+    copyButton.style.borderRadius = '4px';
+    copyButton.style.cursor = 'pointer';
+    copyButton.addEventListener('click', () => {
+        navigator.clipboard.writeText(code).then(() => {
+            alert('代码已复制到剪贴板！');
+        });
+    });
+    popup.appendChild(copyButton);
+
+    // 添加关闭按钮
+    const closeButton = document.createElement('button');
+    closeButton.textContent = '关闭';
+    closeButton.style.marginLeft = '10px';
+    closeButton.style.padding = '8px 16px';
+    closeButton.style.backgroundColor = '#ff4d4f';
+    closeButton.style.color = '#fff';
+    closeButton.style.border = 'none';
+    closeButton.style.borderRadius = '4px';
+    closeButton.style.cursor = 'pointer';
+    closeButton.addEventListener('click', () => {
+        document.body.removeChild(overlay);
+        document.body.removeChild(popup);
+    });
+    popup.appendChild(closeButton);
+
+    // 添加到页面
+    document.body.appendChild(overlay);
+    document.body.appendChild(popup);
+}
