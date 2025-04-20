@@ -78,7 +78,8 @@ compileBtn.addEventListener('click', function () {
             name: startLayer.objectRef.id,
             params: {
                 in_features: startLayer.inputDim,
-                out_features: startLayer.outputDim
+                out_features: startLayer.outputDim,
+                activation: startLayer.activationFunc
             }
         }];
         // 开始循环，每次循环遍历寻找以开始层为起点的连接，并设置结束层为开始层（DFS）
@@ -100,7 +101,8 @@ compileBtn.addEventListener('click', function () {
                 name: endLayer.objectRef.id,
                 params: {
                     in_features: endLayer.inputDim,
-                    out_features: endLayer.outputDim
+                    out_features: endLayer.outputDim,
+                    activation: endLayer.activationFunc
                 }
             };
             msgs.push(msg);
@@ -111,9 +113,7 @@ compileBtn.addEventListener('click', function () {
     console.log('要传递的消息：\n' + JSON.stringify(msgs));
     fetch('http://localhost:5000/generate', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(msgs)
     }).then(async response => {
         const res = await response.json();
