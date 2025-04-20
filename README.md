@@ -12,18 +12,20 @@ deep-learning-builder/
 │   └── dimension_calculator.py            # 逐层计算张量形状，检查维度兼容性（如 Conv → Pool → Linear）
 │
 ├── templates/                          # 模板文件目录
-│   └── pytorch/                           # 按深度学习框架分类（目前是 PyTorch）
-│       └── model.py.j2                    # Jinja2 模板，定义生成的 PyTorch 模型代码格式
+│   ├── pytorch/                           # 按深度学习框架分类（目前是 PyTorch）
+│   │   └── model.py.j2                    # Jinja2 模板，定义生成的 PyTorch 模型代码格式
+│   └── demo.html                          # 前端网页
 │
 ├── utils/                              # 工具模块（响应封装、异常类）
 │   ├── response.py                        # format_response()：
 │   │                                          统一接口返回格式（success/data/error）
 │   └── error_handler.py                   # 自定义异常
 │                                            （ValidationError DimensionMismatchError）
-├── static/                             # 前端页面
+├── static/                             # 静态文件（前端页面）
 │   ├── css/                               # 样式表
 │   │   └── style.css  
 │   └── js/                                # 前端交互逻辑
 │       └── script.js
+
 
 ```
