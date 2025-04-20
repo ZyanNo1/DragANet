@@ -1,0 +1,82 @@
+/******************************
+ * 属性列表
+ ******************************/
+.PropertyPanel {
+    position: fixed;
+    right: 0;
+    width: 300px;
+    height: calc(100% - 70px);
+    background-color: aliceblue;
+    /* 默认隐藏 */
+    display: none;
+    /* 边框 */
+    border: 1px solid gray;
+    /* 间距 */
+    margin: 7px;
+}
+
+.PropertyPanel.active {
+    display: block;
+}
+
+.PropertyPanelHeader {
+    /* 边距 */
+    margin: 8px;
+    font-size: 16px;
+}
+
+.PropertyPanelHiddenBtn {
+    position: absolute;
+    top: 10px;
+    right: 5px;
+    color: crimson;
+    background: none;
+    border: none;
+    font-size: 16px;
+}
+
+.PropertyPanelHiddenBtn:hover {
+    background-color: crimson;
+    color: white;
+}
+
+.PropertyPanelRow {
+    padding: 7px;
+    font-size: 14px;
+}
+
+.PropertyPanelSelectItem {
+    width: 170px;
+}
+
+.SaveBtn {
+    position: absolute;
+    bottom: 7px;
+    right: 7px;
+    background-color: deepskyblue;
+    width: 50px;
+    height: 30px;
+    color: white;
+    font-size: 14px;
+    border: none;
+}
+
+.SaveBtn:hover {
+    background-color: dodgerblue;
+}
+
+.DelBtn {
+    position: absolute;
+    bottom: 7px;
+    right: 65px;
+    background-color: crimson;
+    width: 50px;
+    height: 30px;
+    color: white;
+    font-size: 14px;
+    border: none;
+}
+
+.DelBtn:hover {
+    background-color: brown;
+}

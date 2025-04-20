@@ -1,0 +1,60 @@
+/******************************
+ * 工作区
+ ******************************/
+.Workspace {
+    position: fixed;
+    left: 0;
+    width: calc(100% - 14px);
+    height: calc(100% - 70px);
+    text-align: center;
+    margin: 7px;
+    overflow-x: auto;
+    border: 1px dashed gray;
+}
+
+.Workspace.withExplorerOpen {
+    margin-left: 307px;
+    width: calc(100% - 314px);
+}
+
+.Workspace.withPropertyOpen {
+    margin-right: 307px;
+    width: calc(100% - 314px);
+}
+
+.Workspace.withExplorerOpen.withPropertyOpen {
+    margin-left: 307px;
+    width: calc(100% - 614px);
+}
+
+/* 线性层对象 */
+.DragLinearLayer {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 80px;
+    height: 40px;
+    background-color: chartreuse;
+    color: darkgreen;
+    border: 2px solid darkgreen;
+}
+
+.DragLinearLayer.dragging {
+    opacity: 0.5;
+}
+
+.DragLinearLayer.active {
+    background-color: lightblue;
+    color: darkblue;
+    border: 2px solid darkblue;
+}
+
+.DragLinearLayer.err {
+    background-color: lightcoral;
+    color: crimson;
+}
+
+svg {
+    width: 100%;
+    height: 99%;
+}
