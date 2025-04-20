@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!-- 中文 -->
+<html lang="zh-CN">
+
+<head>
+    <!-- 字符集 -->
+    <meta charset="UTF-8">
+    <!-- 标题 -->
+    <title>DragANet</title>
+    <!-- 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="styles/toolBar.css">
+    <link rel="stylesheet" href="styles/explorer.css">
+    <link rel="stylesheet" href="styles/propertyPanel.css">
+    <link rel="stylesheet" href="styles/workspace.css">
+    <script src="scripts/layerUtil.js"></script>
+</head>
+
+<body>
+    <!-- 工具栏 -->
+    <div class="ToolBar" id="toolBar">
+        <!-- 资源管理器按钮 -->
+        <button class="ToolBarLeftBtn" title="资源管理器" id="explorerBtn">
+            <i class="fa fa-briefcase"></i>
+        </button>
+        <!-- 属性列表按钮 -->
+        <button class="ToolBarRightBtn" title="属性面板" id="propertyBtn">
+            <i class="fa fa-cogs"></i>
+        </button>
+        <!-- 编译按钮 -->
+        <button class="ToolBarRightBtn" title="编译" id="compileBtn">
+            <i class="fa fa-flag"></i>
+        </button>
+        <!-- 连接按钮 -->
+        <button class="ToolBarRightBtn" title="连接" id="connectBtn">
+            <i class="fa fa-exchange"></i>
+        </button>
+    </div>
+    <!-- 资源管理器 -->
+    <div class="Explorer" id="explorer">
+        <!-- 标题 -->
+        <p class="ExplorerHeader" id="explorerHeader">
+            资源管理器
+        </p>
+        <!-- 隐藏按钮 -->
+        <button class="ExplorerHiddenBtn" title="关闭" id="explorerHiddenBtn">
+            <i class="fa fa-close"></i>
+        </button>
+        <!-- 模型文件夹 -->
+        <div class="Folder" id="layerFolder">
+            <div class="FolderHeader" id="layerFolderHeader">
+                <i class="fa fa-folder"></i>
+                模型
+            </div>
+            <div class="Layer" id="linearLayer">
+                <i class="fa fa-cube"></i>
+                全连接层
+            </div>
+        </div>
+    </div>
+    <!-- 工作区 -->
+    <div class="Workspace" id="workspace">
+        <!-- 连接箭头的 SVG 容器 -->
+        <svg id="arrowSvg">
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#000" />
+                </marker>
+            </defs>
+        </svg>
+    </div>
+    <!-- 属性列表 -->
+    <div class="PropertyPanel" id="propertyPanel">
+        <!-- 标题 -->
+        <p class="PropertyPanelHeader" id="propertyPanelHeader">
+            属性列表
+        </p>
+        <!-- 隐藏按钮 -->
+        <button class="PropertyPanelHiddenBtn" title="关闭" id="propertyPanelHiddenBtn">
+            <i class="fa fa-close"></i>
+        </button>
+    </div>
+    <script src="scripts/toolBar.js"></script>
+    <script src="scripts/explorer.js"></script>
+    <script src="scripts/propertyPanel.js"></script>
+    <script src="scripts/workspace.js"></script>
+</body>
+
+</html>
