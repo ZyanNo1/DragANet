@@ -71,9 +71,13 @@ def validate_architecture(layers):
     validate_layers(layers)  # 参数检查
     
     has_flatten = False  # 标志是否已经遇到 Flatten 层
+    is_mlp = True
     for idx, layer in enumerate(layers):
         layer_type = layer['type']
         
+        if layer_type not in ['Linear', 'Dropout']:
+            is_mlp = False
+            
         # 检查 Flatten 层的上下文
         if layer_type == 'Flatten':
             if has_flatten:
@@ -90,7 +94,7 @@ def validate_architecture(layers):
         
         # 检查 Linear 层的上下文
         if layer_type == 'Linear':
-            if not has_flatten:
+            if not has_flatten and not is_mlp:
                 raise ValidationError(
                     f"Layer {idx} ({layer_type}) 必须在 Flatten 层之后",
                     layer_type=layer_type

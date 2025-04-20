@@ -10,6 +10,9 @@ class DimensionCalculator:
             layer_type = layer['type']
             params = layer.get('params', {})
 
+            if len(self.current_dim) == 1:
+                self.flattened = True
+
             if self.flattened and layer_type not in ['Linear', 'Dropout']:
                 raise ValueError(f"Cannot add {layer_type} layer after Flatten operation")
 
@@ -62,7 +65,8 @@ class DimensionCalculator:
     def _handle_linear(self, params):
         if 'out_features' not in params:
             raise ValueError("Linear layer requires 'out_features' parameter")
-        if not self.flattened:
+        if len(self.current_dim) != 1 and not self.flattened:
+            print(f"Before Linear: {self.current_dim}")
             raise ValueError("Linear layer must come after a Flatten layer")
         self.current_dim = (params['out_features'],)
 
