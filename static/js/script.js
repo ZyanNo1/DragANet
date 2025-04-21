@@ -91,17 +91,27 @@ document.addEventListener('DOMContentLoaded', function () {
         let params;
         switch (data) {
             case "全连接层":
-                params = { 输入维度: 320, 输出维度: 160, 激活函数: "ReLU" };
+                params = { 输入维度: 1024, 输出维度: 160, 激活函数: "ReLU" };
                 break;
             case "卷积层":
                 params = { 输入维度:3, 滤波器数量:16, 卷积核高度: 3, 卷积核宽度: 3, 步长: 2, 填充: 1, 激活函数: "ReLU" };
                 break;
             case "池化层":
-                params = { 池化方式: "最大池化", 块高度: 2, 块宽度: 2 };
+                params = { 池化方式: "最大池化", 块高度: 2, 步长: 2, 填充:0};
                 break;
-            case "展平层": // 展平层逻辑
-                params = {}; // 展平层不需要参数
+            case "展平层": 
+                params = {}; // flatten不需要参数
                 break;
+            case "随机失活层":
+                params = { 失活比例: 0.5 };
+                break;
+            case "LSTM":
+                params = { 输入维度: 128, 隐藏层维度: 64, 层数: 2, 随机失活率: 0.5 };
+                break;
+            case "Transformer":
+                params = { 输入维度: 512, 头数: 8, 编码器层数: 6, 解码器层数: 6, 前馈网络维度: 2048, 随机失活率: 0.1 };
+                break;
+
         }
         // Step 3：设置对象内容和数据属性
         draggableItem.innerHTML = `<div>${data}</div>`;
@@ -340,8 +350,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         name: `pool${layers.length + 1}`,
                         params: {
                             kernel_size: parseInt(params["块高度"]),
-                            stride: parseInt(params["块宽度"]),
-                            padding: 0
+                            stride: parseInt(params["步长"]),
+                            padding: parseInt(params["填充"])
                         }
                     };
                     break;
@@ -351,7 +361,42 @@ document.addEventListener('DOMContentLoaded', function () {
                         name: `flatten${layers.length + 1}`,
                         params: {} // 展平层不需要参数
                     };
-                    break;   
+                    break;  
+                case "随机失活层":
+                    layer = {
+                        type: "Dropout",
+                        name: `dropout${layers.length + 1}`,
+                        params: {
+                            p: parseFloat(params["失活比例"])
+                        }
+                    };
+                    break; 
+                case "LSTM":
+                    layer = {
+                        type: "LSTM",
+                        name: `lstm${layers.length + 1}`,
+                        params: {
+                            input_size: parseInt(params["输入维度"]),
+                            hidden_size: parseInt(params["隐藏层维度"]),
+                            num_layers: parseInt(params["层数"]),
+                            batch_first: true,
+                            dropout: parseFloat(params["随机失活率"])
+                        }
+                    };
+                    break;
+                case "Transformer":
+                    layer = {
+                        type: "Transformer",
+                        name: `transformer${layers.length + 1}`,
+                        params: {
+                            d_model: parseInt(params["输入维度"]),
+                            nhead: parseInt(params["头数"]),
+                            num_encoder_layers: parseInt(params["编码器层数"]),
+                            num_decoder_layers: parseInt(params["解码器层数"]),
+                            dim_feedforward: parseInt(params["前馈网络维度"]),
+                            dropout: parseFloat(params["随机失活率"])
+                        }
+                    };
             }
             layers.push(layer);
         });
