@@ -42,20 +42,30 @@
             <div class="sub-item"><i class="fas fa-cube"></i>
                 <span>展平层</span>
             </div>
+            <div class="sub-item"><i class="fas fa-cube"></i>
+                <span>随机失活层</span>
+            </div>
+            <div class="sub-item"><i class="fas fa-cube"></i>
+                <span>LSTM</span>
+            </div>
+            <div class="sub-item"><i class="fas fa-cube"></i>
+                <span>Transformer</span>
+            </div>
         </div>
     </div>
     <!-- 显示属性的按钮 -->
     <button class="property-toggle" id="propertyToggle"><i class="fas fa-cog"></i></button>
     <!-- 添加“开始训练”按钮 -->
-    <button id="startTrainingBtn">开始训练</button>
+    <button id="startTrainingBtn">开始生成</button>
     <!-- 属性列表栏 -->
     <div class="property-panel active" id="propertyPanel">
         <h3>属性列表</h3>
         <!-- 这里可以添加更多属性内容 -->
     </div>
     <!-- 放置模型的区域 -->
-    <div id="dropzone" class="dropzone"></div>
-    <!--已经改为flask模板格式 -->
+    <div id="dropzone" class="dropzone">
+        
+    </div>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 
