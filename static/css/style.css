@@ -354,6 +354,20 @@ body {
     border: 2px dashed #ccc;
     transition: left 0.3s ease;
 }
+.dropzone::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 5px; /* 将箭头放置在右侧 */
+    width: 20px; /* 箭头宽度 */
+    height: 100%; /* 高度与 dropzone 一致 */
+    background-image: url('../image/arrow.png'); /* 使用相对路径 */
+    background-repeat: repeat-y; /* 垂直重复 */
+    background-position: center; /* 居中对齐 */
+    background-size: 30px auto; /* 调整箭头宽度 */
+    opacity: 0.2; /* 设置透明度 */
+    z-index: -1; /* 确保箭头在背景层 */
+}
 
 /* 拖拽对象内的文本样式 */
 .draggable-text {
